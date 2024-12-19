@@ -1,0 +1,122 @@
+\documentclass[12pt, a4paper, dvipsnames]{article}
+
+\usepackage[dvipsnames, table]{xcolor}
+
+\usepackage[french]{babel}
+\usepackage{playcards}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper]{geometry}
+\geometry{top=1cm, bottom=1cm, left=1cm, right=1cm}
+
+\usepackage{tikz}
+\usepackage{pifont}
+\usepackage{graphicx}
+
+
+\begin{document}
+
+\begin{center}
+    \huge \textbf{1000 IPS}
+\end{center}
+
+\begin{center}
+	\large {Sarah EMERY et Valentin HAUDIQUET}
+\end{center}
+
+\section{Règles du jeu}
+
+Le jeu est inspiré du \textit{1000 bornes}. Dans ce jeu, l'objectif est de construire un processeur d'une vitesse de 1000 IPS (Instructions Par Seconde), en augmentant sa vitesse à l'aide d'extensions à celui-ci, tout en parant les attaques des adversaires qui cherchent à la faire diminuer.
+
+\subsection{Préparation}
+
+Au début, on mélange les cartes, puis on distribue 6 cartes à chaque joueurs.
+On tire au sort un joueur qui va commencer, puis on joue dans le sens des aiguilles d'une montre.
+
+\subsection{Tour d'un joueur}
+
+Lors de son tour, un joueur commence par piocher une carte.
+Ensuite, il peut :
+\begin{itemize}
+    \item Jouer une carte \textbf{extension} ; il la pose alors devant lui et la vitesse de son processeur augmente
+    \item Jouer une carte \textbf{attaque} ; il choisit alors quel adversaire attaquer, pose la carte sur l'extension cible de l'adversaire, et la vitesse de son processeur diminue
+    \item Jouer une carte \textbf{parade} ; il choisit alors l'attaque adaptée sur son propre processeur qu'il désire parer, et pose la parade par-dessus
+\end{itemize}
+
+Un joueur attaqué peut, s'il possède une parade adaptée, jouer alors immédiatement une carte parade, même si ce n'est pas son tour.
+
+\subsection{But du jeu}
+
+Dès qu'un joueur atteint une vitesse de 1000, il remporte la partie.
+
+\section{Liste des cartes}
+
+\begin{tabular}{|l|l|l|l|p{55mm}|}
+    \hline
+    \textbf{Type} & \textbf{Nom} & \textbf{Nécessite} & \textbf{Effet} & \textbf{Description} \\
+    \hline
+    Extension & Pipeline & N/A & +100 &
+    Un pipeline permet à un processeur de réutiliser ses unités fonctionnelles en
+    démarrant l'exécution d'une nouvelle instruction avant la fin de l'instruction
+    précédente. Typiquement, l'exécution d'une instruction est découpée en étapes,
+    comme "fetch, decode, execute", et au moment du decode de la première instruction, on peut déjà fetch la seconde.\\
+    \hline
+    Attaque & Aléa de contrôle & Pipeline & +50 &
+    Un aléa de contrôle arrive quand un processeur pipeliné rencontre un
+    branchement conditionnel (\texttt{if}). Il ne peut alors pas déterminer
+    à l'avance quelle branche charger, et doit donc arrêter son pipeline jusqu'à
+    la fin de la condition.\\
+    \hline
+    Parade & Prédicteur de branchement & Aléa de contrôle & +80 &
+    Un prédicteur de branchement permet au processeur pipeliné de prédire à
+    l'avance le résultat d'un branchement conditionnel (\texttt{if}), en
+    utilisant l'historique relative à cette branche.\\
+    \hline
+    Attaque & Aléa de données & Pipeline & +50 & 
+    Un aléa de donnée arrive quand un processeur pipeliné rencontre une
+    instruction dont l'opérande dépend du résultat de l'instruction précédente.
+    Typiquement, un aléa RAW (Read After Write) consiste en une instruction écrivant
+    son résultat en mémoire, puis l'instruction suivante lisant à la même addresse.
+    Le processeur doit alors arrêter son pipeline jusqu'à la fin de l'écriture.\\
+    \hline
+    Parade & Bypass & Aléa de données & +70 &
+    Un bypass permet d'éviter une couteuse écriture mémoire lors d'un aléa de
+    données, en passant directement le résultat de la première instruction à
+    la seconde instruction. \\
+    \hline
+\end{tabular}
+
+\begin{tabular}{|l|l|l|l|p{55mm}|}
+    \hline
+    \textbf{Type} & \textbf{Nom} & \textbf{Nécessite} & \textbf{Effet} & \textbf{Description} \\
+    \hline
+    Attaque & Aléa structurel & Pipeline & +50 &
+    Un aléa structurel arrive quand un processeur pipeliné n'a plus assez d'unité fonctionnelle pour exécuter les étapes des instructions en même temps. Typiquement, si on a trop d'accès mémoire en même temps ou plusieurs opérations arithmétiques en même temps. Dans ce cas, il doit arrêter son pipeline jusqu'à la fin de l'opération.\\
+    \hline
+    Parade & Unité supplémentaire & Aléa structurel & +90 &
+    Des unités fonctionnelles supplémentaires permettent au processeur de ne plus
+    avoir d'aléa structurel, puisqu'il y a toujours une unité libre pour exécuter
+    l'étape de l'instruction.\\
+    \hline
+    Extension & Superscalaire & Pipeline & +100 &
+    Un processeur superscalaire permet d'exécuter, en profitant du pipeline, plusieurs instructions en parallèle, depuis le même flux d'instructions.\\
+    \hline
+    Parade & Out-of-order & Superscalaire & +80 &
+    Un processeur out-of-order va réordonner les instructions pour 
+    éviter les aléas.\\
+    \hline
+    Extension & Cache & N/A & +50 &
+    Stackable 3 fois. Un cache permet d'éviter des accès mémoires couteux en
+    stockant des valeurs fréquemment utilisées.\\
+    \hline
+    Attaque & Cache miss & Cache & +30 & ?\\
+    \hline
+    Parade & Prefetching & Cache miss & +40 & ?\\
+    \hline
+    Processeur vectoriel & & & & \\
+    \hline
+    Processeur multicoeur & & & x1.5 & \\
+    \hline
+\end{tabular}
+
+\end{document}
+
